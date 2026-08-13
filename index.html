@@ -356,15 +356,7 @@
     </div>
   </div>
 
-  <div class="cta-panel">
-    <div>
-      <h3>เหลือ <span id="ctaMissing"></span> item ที่ยังไม่ได้กรอก</h3>
-      <p>ให้แต่ละแผนกกรอกคอลัมน์ "Action" (แนวทางการจัดการ) ในไฟล์ Excel ต้นทางให้ครบ เพื่ออัปเดตแดชบอร์ดนี้ในรอบถัดไป</p>
-    </div>
-    <a class="btn btn-primary" href="https://khonburisugar-my.sharepoint.com/:x:/g/personal/paijit_j_kbs_co_th/IQBFoGjrK40jSZwQm_Xs1ZzWAWtvLJHs42jKDkI0d5rMXX8?e=YIh9C2" target="_blank" rel="noopener">
-      ไปกรอกข้อมูลใน Excel ↗
-    </a>
-  </div>
+  <div class="cta-panel" id="ctaPanel"></div>
 
 </main>
 
@@ -375,8 +367,8 @@ const data = [
 ["เครื่องกล", 1413, 0],
 ["ไฟฟ้า", 549, 0],
 ["เครื่องมือวัด", 352, 0],
-["สำนักงาน", 4, 4],
-["สิ่งแวดล้อมความปลอดภัย", 2, 2]
+["สำนักงาน", 4, 0],
+["สิ่งแวดล้อมความปลอดภัย", 2, 0]
 ].map(([name,total,missing]) => ({
   name, total, missing,
   done: total-missing,
@@ -392,9 +384,9 @@ const deptsWithMissing = data.filter(d=>d.missing>0).length;
 document.getElementById('statRow').innerHTML = `
   <div class="stat">
     <div class="k mono">${grandTotal.toLocaleString()}</div>
-    <div class="lbl">Item ทั้งหมด (5 แผนก)</div>
+    <div class="lbl">Item ทั้งหมด (${data.length} แผนก)</div>
   </div>
-  <div class="stat warn">
+  <div class="stat${grandMissing > 0 ? ' warn' : ''}">
     <div class="k mono">${grandMissing.toLocaleString()}</div>
     <div class="lbl">ยังไม่ได้ระบุแนวทางการจัดการ</div>
   </div>
@@ -402,15 +394,33 @@ document.getElementById('statRow').innerHTML = `
     <div class="k mono">${grandPct}%</div>
     <div class="lbl">สัดส่วนที่ระบุแนวทางแล้ว</div>
   </div>
-  <div class="stat warn">
+  <div class="stat${deptsWithMissing > 0 ? ' warn' : ''}">
     <div class="k mono">${deptsWithMissing}</div>
     <div class="lbl">แผนกที่ยังมี item ค้างอย่างน้อย 1 รายการ</div>
   </div>
 `;
-document.getElementById('ctaMissing').textContent = grandMissing.toLocaleString();
 document.getElementById('fTotal').textContent = grandTotal.toLocaleString();
 document.getElementById('fMissing').textContent = grandMissing.toLocaleString();
 document.getElementById('fPct').innerHTML = `<span class="mono">${grandPct}% เสร็จสมบูรณ์</span>`;
+
+// cta panel
+document.getElementById('ctaPanel').innerHTML = grandMissing === 0 ? `
+  <div>
+    <h3>ครบถ้วนแล้วทั้ง ${grandTotal.toLocaleString()} item</h3>
+    <p>ทุกแผนกระบุแนวทางการจัดการ (Action) ในไฟล์ Excel ต้นทางครบ 100% แล้ว พร้อมสำหรับขั้นตอนถัดไป</p>
+  </div>
+  <a class="btn btn-primary" href="https://khonburisugar-my.sharepoint.com/:x:/g/personal/paijit_j_kbs_co_th/IQBFoGjrK40jSZwQm_Xs1ZzWAWtvLJHs42jKDkI0d5rMXX8?e=YIh9C2" target="_blank" rel="noopener">
+    เปิดไฟล์ Excel ↗
+  </a>
+` : `
+  <div>
+    <h3>เหลือ ${grandMissing.toLocaleString()} item ที่ยังไม่ได้กรอก</h3>
+    <p>ให้แต่ละแผนกกรอกคอลัมน์ "Action" (แนวทางการจัดการ) ในไฟล์ Excel ต้นทางให้ครบ เพื่ออัปเดตแดชบอร์ดนี้ในรอบถัดไป</p>
+  </div>
+  <a class="btn btn-primary" href="https://khonburisugar-my.sharepoint.com/:x:/g/personal/paijit_j_kbs_co_th/IQBFoGjrK40jSZwQm_Xs1ZzWAWtvLJHs42jKDkI0d5rMXX8?e=YIh9C2" target="_blank" rel="noopener">
+    ไปกรอกข้อมูลใน Excel ↗
+  </a>
+`;
 
 // table
 function pctClass(pct){
